@@ -1,0 +1,23 @@
+{
+    "name": "azardron228/stag",
+    "description": "framework",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Stag\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Azardo5300",
+            "email": "ibrayv2005@gmail.com"
+        }
+    ],
+    "require": {
+        "php-di/php-di": "^7.0",
+        "symfony/console": "^7.0",
+        "psr/http-client": "^1.0",
+        "psr/http-message": "^2.0",
+        "psr/http-server-handler": "^1.0"
+    }
+}
