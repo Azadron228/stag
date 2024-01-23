@@ -4,8 +4,7 @@ namespace Stag\Kernel;
 
 define('APP_ROOT', dirname(__DIR__, 3) . '/');
 
-use Dotenv\Dotenv;
-use GuzzleHttp\Psr7\Response;
+use Nyholm\Psr7\Response as Psr7Response;
 use Stag\Container\Container;
 use Stag\DB\Database;
 use Stag\Exception\ErrorHandler;
@@ -32,17 +31,10 @@ class BaseKernel implements KernelInterface
   public function __construct()
   {
     session_start();
-    $this->loadEnvironment();
     $this->setupLogger();
     $this->setupErrorHandler();
     $this->setupContainer();
     $this->registerServices();
-  }
-
-  protected function loadEnvironment()
-  {
-    $dotenv = Dotenv::createImmutable($this->getRootDir());
-    $dotenv->load();
   }
 
   public function getRootDir()
@@ -108,7 +100,8 @@ class BaseKernel implements KernelInterface
 
   public function handleMiddleware($request)
   {
-    $RequesHandler = new MiddlewareHandler(new Response(), $this->container, $this->middleware);
+    $response = new Psr7Response();
+    $RequesHandler = new MiddlewareHandler($response, $this->container, $this->middleware);
     $RequesHandler->handle($request);
   }
 
