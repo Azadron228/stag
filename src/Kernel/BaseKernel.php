@@ -2,8 +2,6 @@
 
 namespace Stag\Kernel;
 
-define('APP_ROOT', dirname(__DIR__, 3) . '/');
-
 use Nyholm\Psr7\Response as Psr7Response;
 use Stag\Container\Container;
 use Stag\DB\Database;
@@ -22,11 +20,11 @@ class BaseKernel implements KernelInterface
     // AppMiddleware::class,
   ];
 
-  protected Router $router;
-  protected Logger $logger;
-  protected Container $container;
-  protected ErrorHandler $errorHandler;
-  protected Database $database;
+  private Router $router;
+  private Logger $logger;
+  private Container $container;
+  private ErrorHandler $errorHandler;
+  private Database $database;
 
   public function __construct()
   {
@@ -37,20 +35,15 @@ class BaseKernel implements KernelInterface
     $this->registerServices();
   }
 
-  public function getRootDir()
-  {
-    return dirname(__DIR__, 3) . '/';
-  }
-
   public function setupLogger()
   {
-    $logger = new Logger($this->getRootDir() . '/log.txt');
+    $logger = new Logger(APP_ROOT . '/log.txt');
     $this->logger = $logger;
   }
 
   public function setupContainer(): ContainerInterface
   {
-    $config = require_once APP_ROOT . '/app/config/services.php';
+    $config = require_once APP_ROOT . 'config/services.php';
 
     $this->container = new Container($config);
     return $this->container;
@@ -65,11 +58,7 @@ class BaseKernel implements KernelInterface
   public function setupDb()
   {
     $this->container->set(Database::class, function () {
-      // $config = include APP_ROOT . 'config/database.php';
-      $config = [
-        'driver'   => 'sqlite',
-        'database' => APP_ROOT . "/database/database.sqlite"
-      ];
+      $config = include APP_ROOT . 'config/database.php';
       return new Database($config);
     });
   }
@@ -77,7 +66,7 @@ class BaseKernel implements KernelInterface
   public function setupRoutes()
   {
     $this->router = new Router($this->container);
-    $routes = require $this->getRootDir() . '/app/routes/routes.php';
+    $routes = require APP_ROOT . 'app/routes/routes.php';
     $routes($this->router);
     return $this->router;
   }
