@@ -45,7 +45,8 @@ class BaseKernel implements KernelInterface
     $dotenv->load();
   }
 
-  public function getRootDir(){
+  public function getRootDir()
+  {
     return dirname(__DIR__, 3) . '/';
   }
 
@@ -114,6 +115,8 @@ class BaseKernel implements KernelInterface
   public function handleRequest(ServerRequestInterface $request)
   {
     $this->handleMiddleware($request);
-    $this->router->matchRoute($request);
+    $response = $this->router->matchRoute($request);
+
+    (new \Laminas\HttpHandlerRunner\Emitter\SapiEmitter())->emit($response);
   }
 }

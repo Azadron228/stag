@@ -6,6 +6,7 @@ use Nyholm\Psr7\Response;
 use Stag\Container\Container;
 use Stag\Middleware\MiddlewareHandler;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Router
@@ -43,7 +44,7 @@ class Router
     return [$processedUri, $parameters];
   }
 
-  public function matchRoute(ServerRequestInterface $request)
+  public function matchRoute(ServerRequestInterface $request): ResponseInterface
   {
     $requestMethod = $request->getMethod();
     $requestUri = $request->getUri();
@@ -59,14 +60,18 @@ class Router
         if ($parsedUri === $uri) {
 
           $this->callMiddleware($route, $request);
-          $this->executeClosure($route, $params, $request);
+          $response = $this->executeClosure($route, $params, $request);
 
-          return;
+          return $response;
         }
       }
     }
 
-    return (new Response())->withStatus(404);
+
+    $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
+
+    $responseBody = $psr17Factory->createStream('404 Not Found');
+    return $psr17Factory->createResponse(200)->withBody($responseBody);
   }
 
   public function callMiddleware($route, $request)
@@ -74,6 +79,8 @@ class Router
     $RequestHandler = new MiddlewareHandler(new Response(), $this->container, $route->getMiddleware() ?? []);
     $RequestHandler->handle($request);
   }
+
+
 
   public function executeClosure($route, $params, $request)
   {
@@ -87,18 +94,15 @@ class Router
       return;
     }
 
+    // if ececutable is controller
     $controller = $this->container->get($route->getAction()[0]);
     $action = $route->getAction()[1];
 
-    return $this->callController($params, $action, $controller, $request);
-  }
-
-  protected function callController($params, $action, $controller, $request)
-  {
     if (!isset($params)) {
-      $controller->{$action}($request);
+      $controller->{$action}();
     } else {
-      $controller->{$action}($request,...$params);
+      $response = $controller->{$action}($request, ...$params);
     }
+    return $response;
   }
 }
