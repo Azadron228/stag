@@ -2,6 +2,8 @@
 
 namespace Stag\Kernel;
 
+require_once __DIR__ . '/../Helpers/Helpers.php';
+
 use Nyholm\Psr7\Response as Psr7Response;
 use Stag\Container\Container;
 use Stag\DB\Database;
@@ -28,7 +30,6 @@ class BaseKernel implements KernelInterface
 
   public function __construct()
   {
-    require_once '../Helpers/Helpers.php';
     session_start();
     $this->setupLogger();
     $this->setupErrorHandler();
