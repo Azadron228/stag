@@ -45,6 +45,11 @@ class Auth implements AuthInterface
     session_destroy();
   }
 
+  public static function user()
+  {
+    return $_SESSION['user'];
+  }
+
   public static function bcrypt(string $password): string
   {
     return password_hash($password, PASSWORD_DEFAULT);
