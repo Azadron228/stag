@@ -1,5 +1,3 @@
-# Todo
-
 Developed a modular PHP framework from scratch for learning purposes, exploring key concepts like
 PSR-11 DI with autowiring, PSR-15 middleware for flexible request handling, and PSR-3 logging for improved
 debugging. Implemented robust validation rules and secure authentication with cookie-based sessions. 
