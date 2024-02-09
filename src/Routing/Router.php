@@ -80,29 +80,84 @@ class Router
     $RequestHandler->handle($request);
   }
 
-
-
-  public function executeClosure($route, $params, $request)
-  {
+    public function executeClosure($route, $params)
+{
     $action = $route->getAction();
 
-    // If closure is function
     if ($action instanceof \Closure) {
-      if (is_array($params)) {
-        $action(...$params);
-      }
-      return;
+        return $this->executeClosureAction($action, $params);
     }
 
-    // if ececutable is controller
+    return $this->executeControllerAction($route, $params);
+}
+
+private function executeClosureAction(\Closure $action, $params)
+{
+    $reflectionFunction = new \ReflectionFunction($action);
+    $dependencies = [];
+
+    foreach ($reflectionFunction->getParameters() as $parameter) {
+        $parameterType = $parameter->getType();
+        if ($parameterType !== null && !$parameterType->isBuiltin()) {
+            $className = $parameterType->getName();
+            $dependencies[] = $this->container->get($className);
+        }
+    }
+
+    if (count($params) > 0) {
+        $dependencies = array_merge($dependencies, $params);
+    }
+
+    return $action(...$dependencies);
+}
+
+private function executeControllerAction($route, $params)
+{
     $controller = $this->container->get($route->getAction()[0]);
     $action = $route->getAction()[1];
 
-    if (!isset($params)) {
-      $controller->{$action}();
-    } else {
-      $response = $controller->{$action}($request, ...$params);
+    $reflectionMethod = new \ReflectionMethod($controller, $action);
+    $dependencies = [];
+
+    foreach ($reflectionMethod->getParameters() as $parameter) {
+        $parameterType = $parameter->getType();
+        if ($parameterType !== null && !$parameterType->isBuiltin()) {
+            $className = $parameterType->getName();
+            $dependencies[] = $this->container->get($className);
+        }
     }
-    return $response;
-  }
+
+    if (!isset($params)) {
+        return $controller->{$action}(...$dependencies);
+    } else {
+        return $controller->{$action}(...$dependencies, ...$params);
+    }
+}
+
+
+
+  //
+  // public function executeClosure($route, $params, $request)
+  // {
+  //   $action = $route->getAction();
+  //
+  //   // If closure is function
+  //   if ($action instanceof \Closure) {
+  //     if (is_array($params)) {
+  //       $action(...$params);
+  //     }
+  //     return;
+  //   }
+  //
+  //   // if ececutable is controller
+  //   $controller = $this->container->get($route->getAction()[0]);
+  //   $action = $route->getAction()[1];
+  //
+  //   if (!isset($params)) {
+  //     $controller->{$action}();
+  //   } else {
+  //     $response = $controller->{$action}($request, ...$params);
+  //   }
+  //   return $response;
+  // }
 }
