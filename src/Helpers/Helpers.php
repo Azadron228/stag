@@ -1,6 +1,8 @@
 <?php
 
+use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
+use Nyholm\Psr7Server\ServerRequestCreator;
 
 if (!function_exists('response')) {
   function response()
@@ -21,5 +23,19 @@ if (!function_exists('request')) {
       $psr17Factory  // StreamFactory
     );
     return $creator->fromGlobals();
+  }
+}
+
+
+if (!function_exists('json_response')) {
+  function json_response(array $data, int $statusCode = 200): Response
+  {
+    $psr17Factory = new Psr17Factory();
+    $responseBody = $psr17Factory->createStream(json_encode($data));
+
+    return $psr17Factory
+      ->createResponse($statusCode)
+      ->withBody($responseBody)
+      ->withHeader('Content-Type', 'application/json');
   }
 }

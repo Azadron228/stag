@@ -71,7 +71,7 @@ class Router
     $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
 
     $responseBody = $psr17Factory->createStream('404 Not Found');
-    return $psr17Factory->createResponse(200)->withBody($responseBody);
+    return $psr17Factory->createResponse(404)->withBody($responseBody);
   }
 
   public function callMiddleware($route, $request)
