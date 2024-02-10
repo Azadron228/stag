@@ -15,7 +15,7 @@ class Auth implements AuthInterface
   public static function login($user)
   {
     $_SESSION['authenticated'] = true;
-    $_SESSION['user'] = $user;
+    $_SESSION['user_id'] = $user['id'];
 
     $token = bin2hex(random_bytes(32));
     setcookie("AuthToken", $token, time() + 60 * 60 * 24 * 7, "/", "", true, true);
