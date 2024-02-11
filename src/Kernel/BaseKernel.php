@@ -99,7 +99,7 @@ class BaseKernel implements KernelInterface
   public function handleRequest(ServerRequestInterface $request)
   {
     $this->handleMiddleware($request);
-    $response = $this->router->matchRoute($request);
+    $response = $this->router->dispatch($request);
 
     (new \Laminas\HttpHandlerRunner\Emitter\SapiEmitter())->emit($response);
   }
