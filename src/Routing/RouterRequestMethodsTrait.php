@@ -7,7 +7,7 @@ trait RouterRequestMethodsTrait
   
   public function addRoute(string $uri, string $requestMethod, array|callable $target, string $name = null, array $middleware = [])
   {
-    $route = new Route($uri, $requestMethod, $target, $name, $middleware);
+    $route = new Route($uri, $requestMethod, $target, $name, $middleware, $this->container);
     $this->routes[] = $route;
     return $route;
   }
