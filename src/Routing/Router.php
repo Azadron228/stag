@@ -52,19 +52,23 @@ class Router
   public function dispatch(ServerRequestInterface $request): ResponseInterface
   {
     $route = $this->matchRoute($request);
-    if ($route == null) {
-      return response()->withStatus(404);
-    }
+    if ($route == null) {return response()->withStatus(404);}
 
     $this->route = $route;
     $middlewares = $route->getMiddleware();
 
-    $this->middleware = $middlewares;
+    if($middlewares !== null){$this->middleware = $middlewares;}
 
-    $this->handle($request);
 
-    return new Response();
+    $response = $this->handle($request);
+
+    if($response == null){
+      return new Response(); 
+    }
+
+    return $response;
   }
+
 
   public function parseRoute($route, $requestUri)
   {

@@ -18,7 +18,7 @@ class Route
   private array $params = [];
   private ContainerInterface $container;
 
-  public function __construct($uri, $method, $action, $middleware = [], $name = null, ContainerInterface $container)
+  public function __construct(ContainerInterface $container, $uri, $method, $action, $middleware = [], $name = null)
   {
     $this->uri = $uri;
     $this->method = $method;
