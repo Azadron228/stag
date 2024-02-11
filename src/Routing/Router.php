@@ -7,8 +7,9 @@ use Stag\Container\Container;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class Router
+class Router implements RequestHandlerInterface
 {
   use RouterRequestMethodsTrait;
 

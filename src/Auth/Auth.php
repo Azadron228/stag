@@ -41,13 +41,13 @@ class Auth implements AuthInterface
   public static function logout()
   {
     unset($_SESSION['authenticated']);
-    unset($_SESSION['user']);
+    unset($_SESSION['user_id']);
     session_destroy();
   }
 
-  public static function user()
+  public static function id()
   {
-    return $_SESSION['user'];
+    return $_SESSION['user_id'];
   }
 
   public static function bcrypt(string $password): string
