@@ -13,8 +13,8 @@ debugging. Implemented robust validation rules and secure authentication with co
 
 ## Creating Project
 
-A simple demonstation app
+A simple demonstation app with authentication.
 
 ```sh
-composer create-project azadron228/stag-skeleton demo
+composer create-project --prefer-dist azadron228/stag-skeleton=dev-main new-app
 ```
